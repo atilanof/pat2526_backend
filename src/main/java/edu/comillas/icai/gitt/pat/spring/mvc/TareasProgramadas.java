@@ -4,7 +4,7 @@ package edu.comillas.icai.gitt.pat.spring.mvc;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
+
 import org.springframework.http.*;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -13,7 +13,7 @@ import org.springframework.web.client.RestTemplate;
 
 @Component
 public class TareasProgramadas {
-    private Logger logger = LoggerFactory.getLogger(getClass());
+    private final Logger logger = LoggerFactory.getLogger(getClass());
     private String respuesta_ant;
     @Scheduled(fixedRate = 300000)
     public void ritmoFijo() {
@@ -27,12 +27,13 @@ public class TareasProgramadas {
 
     @Scheduled(fixedRate = 60000)
     public void consultarAPI() {
+        //hola
         logger.info("La url es: https://xkcd.com/info.0.json");
         try {
             HttpHeaders headers = new HttpHeaders();
             //headers.set("Cabecera", "Valor");
-            RestTemplate restTemplate=new RestTemplate();
-            String response_ant;
+            //RestTemplate restTemplate=new RestTemplate();
+
             ResponseEntity<String> response = new RestTemplate().exchange(
                     "https://xkcd.com/info.0.json", HttpMethod.GET,
                     new HttpEntity<>(headers),
@@ -44,7 +45,7 @@ public class TareasProgramadas {
             if (response.getStatusCode()== HttpStatus.OK) {
                 String respuesta = response.getBody();
                 logger.info("He recibido respuesta");
-                if (respuesta!=this.respuesta_ant) {
+                if (respuesta.compareTo(respuesta_ant)!=0) {
                     logger.info(respuesta);
                 }
                 this.respuesta_ant=respuesta;
