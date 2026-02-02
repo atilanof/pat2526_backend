@@ -12,10 +12,11 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 @RestController
 public class ControladorRest {
-    private final Map<String, ModeloContador> contadores = new HashMap<>();
+    private final Map<String, ModeloContador> contadores = new ConcurrentHashMap<>();
     private Logger logger = LoggerFactory.getLogger(getClass());
 
 
@@ -68,6 +69,11 @@ public class ControladorRest {
         return ex.getErrores().stream().map(error -> new ModeloCampoIncorrecto(
                 error.getDefaultMessage(), error.getField(), error.getRejectedValue()
         )).toList();
+    }
+    @DeleteMapping("/api/contadores/borrar/{nombre}")
+    public void borrar(@PathVariable String nombre) {
+        contadores.remove(nombre);
+        return;
     }
 
 }
