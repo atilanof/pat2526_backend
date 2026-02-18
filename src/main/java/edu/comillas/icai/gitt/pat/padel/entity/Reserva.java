@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import jakarta.annotation.Generated;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
@@ -23,8 +24,10 @@ public class Reserva {
     public Long idPista;
 
     @Column(nullable = false)
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     @NotNull(message = "La fecha no puede estar vacía")
-    public LocalDateTime fechaReserva;
+    @Generated(value = "org.hibernate.annotations.GenerationTime.INSERT")
+    public LocalDateTime fechaReserva = LocalDateTime.now(); // Se asigna la fecha actual al crear la reserva
 
     @Column(nullable = false)
     @NotNull(message = "La hora de inicio no puede estar vacía")
@@ -50,7 +53,7 @@ public class Reserva {
     @PreUpdate
     private void calcularHoraFin() {
         if (horaInicio != null && duracionMinutos != null) {
-            this.horaFin = horaInicio.plusMinutes(duracionMinutos);
+            this.horaFin = horaInicio.plusMinutes(duracionMinutos).minusSeconds(1);
         }
     }
 }

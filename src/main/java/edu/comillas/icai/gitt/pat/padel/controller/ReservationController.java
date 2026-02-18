@@ -60,7 +60,7 @@ public class ReservationController {
 
         // Calcular horaFin manualmente antes de las validaciones
         if (reserva.horaInicio != null && reserva.duracionMinutos != null) {
-            reserva.horaFin = reserva.horaInicio.plusMinutes(reserva.duracionMinutos);
+            reserva.horaFin = reserva.horaInicio.plusMinutes(reserva.duracionMinutos).minusSeconds(1);;
         }
 
         // Validar que la hora de inicio sea anterior a la hora de fin
