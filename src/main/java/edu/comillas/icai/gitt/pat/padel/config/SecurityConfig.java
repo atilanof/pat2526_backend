@@ -14,7 +14,7 @@ import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity // Habilita @PreAuthorize, @PostAuthorize, @Secured, etc.
+@EnableMethodSecurity // Habilita @PreAuthorize en tus controladores
 public class SecurityConfig {
 
     @Bean
@@ -34,29 +34,27 @@ public class SecurityConfig {
                         .ignoringRequestMatchers("/pistaPadel/**", "/h2-console/**")
                 )
                 .headers(headers -> headers
-                        .frameOptions(frameOptions -> frameOptions.sameOrigin()) // Permite H2 console
+                        .frameOptions(frameOptions -> frameOptions.sameOrigin()) // Permite ver la consola H2
                 )
                 .authorizeHttpRequests(authz -> authz
-                        // Endpoints públicos (sin autenticación)
+                        // --- ACCESO PÚBLICO (Sin login) ---
                         .requestMatchers(HttpMethod.POST, "/pistaPadel/auth/register").permitAll()
                         .requestMatchers(HttpMethod.POST, "/pistaPadel/auth/login").permitAll()
-
-
                         .requestMatchers("/h2-console/**").permitAll()
                         .requestMatchers("/pistaPadel/availability/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/pistaPadel/courts").permitAll() // Para que el Frontend vea las pistas
 
-
-                        // Endpoints de auth que requieren autenticación
+                        // --- ACCESO PROTEGIDO (Requiere login) ---
                         .requestMatchers(HttpMethod.POST, "/pistaPadel/auth/logout").authenticated()
                         .requestMatchers(HttpMethod.GET, "/pistaPadel/auth/me").authenticated()
 
-                        // Cualquier otra petición requiere autenticación
+                        // Cualquier otra petición (Reservar, Admin, Borrar) requiere estar autenticado
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
                 )
-                .httpBasic(httpBasic -> {}); // Habilita autenticación básica HTTP
+                .httpBasic(httpBasic -> {}); // Soporte para pruebas rápidas
 
         return http.build();
     }
